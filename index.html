@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>REFINE-DP: Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning</title>
-  <meta name="description" content="REFINE-DP: Fine-tuning of Reinforcement Learning and Diffusion Policy for Humanoid Loco-manipulation" />
+  <title>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</title>
+  <meta name="description" content="Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -869,7 +869,6 @@
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-bottom">
-      <!-- <h1><span>REFINE-DP</span><br>Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning</h1> -->
        <h1>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</h1>
     </div>
     <a href="#main" class="scroll-hint" aria-label="Scroll down">↓</a>
@@ -894,7 +893,6 @@
     <section class="fade-up">
       <div style="max-width:100%; margin:0 auto; aspect-ratio:16/9; border-radius:var(--radius); overflow:hidden;">
         <video controls autoplay loop muted style="width:100%; height:100%; display:block; object-fit:cover;">
-            <!-- <source src="./assets/videos/FinalVideo-refineDP_S.mp4" type="video/mp4"> -->
             <source src="" type="video/mp4">
         </video>
       </div>
@@ -909,22 +907,6 @@
     <section class="fade-up">
       <h2 class="section-title">Abstract</h2>
       <p class="abstract-text">
-        <!-- Humanoid loco-manipulation requires coordinated high-level motion plans with stable, low-level whole-body
-        execution under complex robot-environment dynamics and long-horizon tasks. While diffusion policies (DPs)
-        show promise for learning from demonstrations, deploying them on humanoids poses critical challenges: the
-        motion planner trained offline is decoupled from the low-level controller, leading to poor command tracking,
-        compounding distribution shift, and task failures. The common approach of scaling demonstration data is
-        prohibitively expensive for high-dimensional humanoid systems. To address this challenge, we present
-        <strong>REFINE-DP</strong> (REinforcement learning FINE-tuning of Diffusion Policy), a hierarchical framework that jointly
-        optimizes a DP high-level planner and an RL-based low-level loco-manipulation controller. The DP is
-        fine-tuned via a PPO-based diffusion policy gradient to improve task success, while the controller is
-        simultaneously updated to accurately track the planner's evolving command distribution, reducing the
-        distributional mismatch that degrades motion quality. We validate <strong>REFINE-DP</strong> on a humanoid robot performing
-        long-horizon loco-manipulation tasks, including door traversal and long-horizon object transport. <strong>REFINE-DP</strong>
-        achieves over <strong>$90\%$</strong> success rate in simulation, even in extreme out-of-distribution cases (with respect to
-        the pre-trained policy), and enables smooth autonomous task execution in real-world dynamic environments.
-        Our proposed method substantially outperforms pre-trained DP baselines and demonstrates RL fine-tuning is
-        key to reliable humanoid loco-manipulation. -->
         Humanoid locomotion on granular terrain remains a <strong>significant challenge</strong> due to its complex foot-terrain interaction dynamics that are difficult to model.
         Existing approaches either ignore granular contact dynamics or incorporate simplified normal force models with heuristic tangential components.
         In this work, we present a <strong>physics-grounded granular contact model</strong> based on three-dimensional resistive force theory (<strong>3D RFT</strong>) and efficiently simulate granular terrain for reinforcement learning (RL) training.
@@ -943,7 +925,7 @@
 
       <div class="method-image">
         <img id="img-framework" src="./assets/ours/images/system_diagram.png"
-             alt="REFINE-DP framework: (a) Data Collection, (b) Diffusion Policy Pre-training, (c) Joint RL Fine-tuning" />
+             alt="Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain" />
       </div>
       <p class="caption">
         System diagram of our proposed terrain-adaptive humanoid locomotion.
@@ -961,36 +943,7 @@
         The terrain model predicts contact force and moment based on the intruder's penetration depth, velocity angle, and orientation.
       </p>
 
-      <!-- <h3 class="subsection-label">Three-Stage Pipeline</h3>
-      <div class="pipeline-grid">
-        <div class="pipeline-card">
-          <div class="pipeline-stage-badge">1</div>
-          <img id="img-data-collection" src="./assets/images/datacollect.png" alt="Data Collection stage diagram" />
-          <div class="pipeline-card-label">Stage 1: Data Collection</div>
-        </div>
-        <div class="pipeline-card">
-          <div class="pipeline-stage-badge">2</div>
-          <img id="img-pretrain" src="./assets/images/pretrain.png" alt="Diffusion Policy Pre-training diagram" />
-          <div class="pipeline-card-label">Stage 2: Diffusion Policy Pre-training</div>
-        </div>
-        <div class="pipeline-card">
-          <div class="pipeline-stage-badge">3</div>
-          <img id="img-ford" src="./assets/images/jointopt.png" alt="REFINE-DP joint fine-tuning diagram" />
-          <div class="pipeline-card-label">Stage 3: REFINE-DP Joint Fine-tuning</div>
-        </div>
-      </div>
-
-      <h3 class="subsection-label">Low-level RL Loco-manipulation Controller</h3>
-      <div class="method-image">
-        <img id="img-rl-pipeline" src="./assets/images/rl_pipeline-1.png"
-             alt="RL loco-manipulation pipeline: upper body tracks hand pose, lower body tracks foot placement" />
-      </div> -->
-
       <div class="callout">
-        <!-- <strong>Key Insight:</strong> Rather than scaling data to overcome distribution shift, REFINE-DP uses
-        reinforcement learning fine-tuning (RLFT) to directly update the diffusion policy via policy gradient.
-        With only 50 teleoperated trajectories, a pre-trained DP fine-tuned with REFINE-DP matches performance that
-        would otherwise require 1000+ demonstrations. -->
         <strong>Key Insight:</strong> Training locomotion policies with granular contact model achieves successful running on diverse granular terrains where rigid contact policies fail.
         Our heuristic-free contact model based on 3D RFT captures realistic penetration and tangential drag than baselines, thus facilitates the most stable policy under rough and deep granular terrains.
         Furthermore, our teacher-student RL framework enables the policy to adapt to varying terrain stiffness by conditioning policy on estimated terrain stiffness.
@@ -1397,12 +1350,13 @@
       <h3 class="modal-title">Cite this work</h3>
       <div class="bibtex-block">
         <button type="button" class="copy-btn" id="copyBtn" onclick="copyBibtex()">Copy</button>
-        <pre id="bibtexCode">@article{gu2026refinedp,
+        <!-- <pre id="bibtexCode">@article{gu2026refinedp,
   title={REFINE-DP: Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning},
   author={Gu, Zhaoyuan and Chen, Yipu and Chai, Zimeng and Cueva, Alfred and Nguyen, Thong and Wu, Yifan and Xue, Huishu and Kim, Minji and Legene, Isaac and Liu, Fukang and Kim, Matthew and Barula, Ayan and Chen, Yongxin and Zhao, Ye},
   journal={arXiv preprint arXiv:2603.13707},
   year={2026}
-}</pre>
+}</pre> -->
+        <pre id="bibtexCode"></pre>
       </div>
     </div>
   </div>
