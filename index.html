@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REFINE-DP: Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning</title>
+  <meta name="description" content="REFINE-DP: Fine-tuning of Reinforcement Learning and Diffusion Policy for Humanoid Loco-manipulation" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Academicons & Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.4/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$',  right: '$',  display: false}
+      ]
+    });"></script>
+
+  <style>
+    /* ── Reset & Variables ─────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f7f8fa;
+      --text: #1a1a2e;
+      --text-mid: #444;
+      --text-light: #666;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border: #e2e5ea;
+      --radius: 10px;
+      --max-w: 1200px;
+      --section-gap: 4.5rem;
+      --font-body: 'Noto Sans', sans-serif;
+      --font-heading: 'Noto Serif', serif;
+      --title-size: 2rem;
+      --body-size: 1rem;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      font-size: 36px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--accent-hover); }
+
+    img, video { max-width: 100%; display: block; }
+
+    /* ── Hero ──────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 500px;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    /* Background video fills the entire hero */
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    /* Subtle dark overlay so text is legible */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .3);
+      z-index: 1;
+    }
+
+    /* Gradient band at the bottom — title lives here */
+    .hero-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 60px 40px 36px;
+      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.3;
+      max-width: 820px;
+      margin: 0 0 .6rem;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,.4);
+    }
+
+    .hero h1 span { color: #60a5fa; }
+    .hero h1 > span:first-child { font-size: 1.4em; font-weight: 700; display: block; line-height: 1.1; margin-bottom: .2em; }
+
+    /* Scroll arrow — bottom right */
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 36px;
+      z-index: 3;
+      font-size: 2rem;
+      opacity: .7;
+      color: #fff;
+      animation: bobble 2s ease-in-out infinite;
+      text-decoration: none;
+    }
+
+    @keyframes bobble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ── Container ─────────────────────────────────── */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    section { padding: var(--section-gap) 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ── Authors ───────────────────────────────────── */
+    .authors-section {
+      text-align: center;
+      padding-top: 3rem;
+    }
+
+    .paper-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.3rem, 3vw, 1.65rem);
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .author-list {
+      font-size: .97rem;
+      line-height: 2;
+      color: var(--text-mid);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .author-list a { font-weight: 500; }
+    .author-list sup { font-size: .7em; margin-left: 1px; }
+
+    .affiliations {
+      font-size: .85rem;
+      color: var(--text-light);
+      margin-top: .8rem;
+    }
+
+    .equal-note {
+      font-size: .82rem;
+      font-style: italic;
+      color: var(--text-light);
+      margin-top: .5rem;
+    }
+
+    /* ── Links Bar ─────────────────────────────────── */
+    .links-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .65rem;
+      margin-top: 2rem;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .55rem 1.1rem;
+      border-radius: 8px;
+      font-size: .88rem;
+      font-weight: 500;
+      font-family: inherit;
+      background: var(--bg-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .link-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,.2);
+    }
+
+    .link-btn i, .link-btn .ai { font-size: 1rem; }
+
+    /* ── Section Headers ──────────────────────────── */
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin: .6rem auto 0;
+    }
+
+    /* ── Abstract ──────────────────────────────────── */
+    .abstract-text {
+      font-size: .98rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* ── Image Grids ───────────────────────────────── */
+    .img-grid {
+      display: grid;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .img-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .img-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+    .img-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-alt);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .img-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+
+    .img-card img,
+    .img-card video {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #fff;
+    }
+
+    .img-card-label {
+      font-size: .82rem;
+      font-weight: 600;
+      text-align: center;
+      padding: .6rem .8rem;
+      color: var(--text-mid);
+      background: var(--bg-alt);
+      letter-spacing: .02em;
+    }
+
+    /* ── Teleoperation Grid ───────────────────────── */
+    .teleop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .teleop-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-alt);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .teleop-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+
+    .teleop-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .teleop-card-label {
+      position: relative;
+      font-size: .82rem;
+      font-weight: 600;
+      text-align: center;
+      padding: .55rem .8rem;
+      color: var(--text-mid);
+      background: var(--bg-alt);
+      letter-spacing: .02em;
+      border-top: 1px solid var(--border);
+    }
+
+    .speed-tag {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(0,0,0,.55);
+      padding: .3rem .6rem;
+      border-radius: 6px;
+      letter-spacing: 0;
+      z-index: 1;
+    }
+
+    .speedup-tag {
+      position: absolute;
+      bottom: 2.5rem;
+      right: .5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #22c55e;
+      background: rgba(0,0,0,.55);
+      padding: .3rem .6rem;
+      border-radius: 6px;
+      letter-spacing: 0;
+      z-index: 1;
+    }
+
+    @media (max-width: 700px) {
+      .teleop-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Pipeline Stage Cards ─────────────────────── */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      gap: 0;
+      margin: 2rem 0;
+    }
+
+    .pipeline-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: visible;
+      background: var(--bg-alt);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .25s, box-shadow .25s;
+      margin-top: 14px;
+    }
+
+    .pipeline-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+
+    .pipeline-stage-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(37,99,235,.35);
+      z-index: 1;
+    }
+
+    .pipeline-card img {
+      width: 100%;
+      height: 320px;
+      object-fit: contain;
+      display: block;
+      background: #fff;
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+    }
+
+    .pipeline-card-label {
+      font-size: .82rem;
+      font-weight: 600;
+      text-align: center;
+      padding: .6rem .8rem;
+      color: var(--text-mid);
+      background: var(--bg-alt);
+      letter-spacing: .02em;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .pipeline-arrow {
+      font-size: 1.6rem;
+      color: var(--accent);
+      padding: 0 .75rem;
+      line-height: 1;
+      margin-top: 14px;
+    }
+
+    /* ── Velocity Comparison Grid ──────────────────── */
+    .velocity-grid-wrapper {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    .velocity-grid {
+      display: grid;
+      gap: .75rem;
+      min-width: 560px;
+    }
+
+    .velocity-grid-header {
+      font-size: .85rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text);
+      padding: .3rem;
+    }
+
+    .velocity-grid-label {
+      font-size: .85rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .velocity-grid-cell {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-alt);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    }
+
+    .velocity-grid-cell video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .velocity-grid-cell.empty,
+    .img-card.empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .35rem;
+      min-height: 90px;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-align: center;
+      padding: .5rem;
+    }
+
+    .velocity-grid-cell.empty img,
+    .img-card.empty img {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* ── Method Image ─────────────────────────────── */
+    .method-image {
+      display: table;
+      margin: 1.5rem auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,.06);
+      background: #fff;
+      padding: 1rem;
+    }
+
+    .method-image img { display: block; }
+
+    .video-container {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .video-box {
+        width: 45%;
+        text-align: center;
+    }
+    .video-box .video-label {
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: .6rem;
+        color: var(--text);
+    }
+    .video-box video {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: var(--radius);
+        box-shadow: 0 2px 12px rgba(0,0,0,.12);
+    }
+
+    /* ── Caption ───────────────────────────────────── */
+    .caption {
+      font-size: .92rem;
+      line-height: 1.65;
+      color: var(--text-mid);
+      text-align: center;
+      margin-top: 1rem;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .caption strong { color: var(--text); }
+
+    .subsection-label {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+      margin: 2.5rem 0 .8rem;
+      color: var(--text);
+    }
+
+    /* ── Results Table ─────────────────────────────── */
+    .results-table-wrapper {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+      white-space: nowrap;
+    }
+
+    .results-table th, .results-table td {
+      padding: .7rem 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .results-table th {
+      background: #1e293b;
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .04em;
+    }
+
+    .results-table th.task-col, .results-table td.task-col {
+      text-align: left;
+      min-width: 220px;
+    }
+
+    .results-table tr:nth-child(even) td { background: var(--bg-alt); }
+    .results-table tr:hover td { background: #eef2ff; }
+
+    .results-table .ours {
+      background: #dbeafe !important;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    .results-table thead tr:first-child th {
+      border-bottom: 2px solid rgba(255,255,255,.15);
+    }
+
+    .results-table .group-header {
+      background: #334155;
+      color: #94a3b8;
+      font-size: .75rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Callout box ───────────────────────────────── */
+    .callout {
+      background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem auto;
+      max-width: 820px;
+      font-size: .95rem;
+      color: var(--text-mid);
+    }
+
+    .callout strong { color: var(--accent); }
+
+    /* ── Appendix Tables ───────────────────────────── */
+    .appendix-table td,
+    .appendix-table th { text-align: center; }
+
+    .appendix-table td,
+    .appendix-table th { padding: .35rem .6rem; font-size: .78rem; }
+
+    .appendix-table { white-space: normal; }
+
+    .appendix-table td.task-col,
+    .appendix-table th.task-col { min-width: 0; }
+
+    .appendix-table td.obs-col,
+    .appendix-table td.term-col { text-align: left; width: 28%; }
+
+    .appendix-table td.form-col { text-align: center; min-width: 0; white-space: nowrap; }
+
+    .appendix-table tr.section-row td {
+      background: #f1f5f9;
+      color: var(--text-mid);
+      font-style: italic;
+      font-weight: 600;
+      text-align: left;
+      padding-left: .6rem;
+    }
+
+    /* ── Appendix Table Width Controls ──────────────── */
+    #appendix-table-0, #appendix-table-1, #appendix-table-2 { width: fit-content; margin-left: auto; margin-right: auto; }
+
+    /* ── BibTeX ────────────────────────────────────── */
+    .bibtex-block {
+      position: relative;
+      background: #1e293b;
+      color: #cbd5e1;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: .82rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      max-width: 700px;
+      margin: 1.5rem auto 0;
+    }
+
+    .bibtex-block pre { white-space: pre-wrap; word-break: break-word; }
+
+    .copy-btn {
+      position: absolute;
+      top: .8rem;
+      right: .8rem;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      color: #94a3b8;
+      padding: .35rem .7rem;
+      border-radius: 6px;
+      font-size: .75rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .copy-btn:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+    /* ── BibTeX Modal ──────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.55);
+      padding: 1.5rem;
+      z-index: 1000;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: .3rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: .8rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: color .2s;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    /* ── Footer ────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      font-size: .82rem;
+      color: var(--text-light);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { font-weight: 500; }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 700px) {
+      .img-grid.cols-2,
+      .img-grid.cols-3 { grid-template-columns: 1fr; }
+      .hero { padding: 2.5rem 1rem 2rem; }
+    }
+
+    /* ── Fade-in animation ─────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════════════════════════
+       PER-IMAGE SIZE CONTROLS
+       Set width (e.g. 80%, 600px) and height (e.g. auto, 400px).
+       height: auto preserves the aspect ratio.
+       margin: 0 auto keeps the image centered when width < 100%.
+       ══════════════════════════════════════════════════ */
+
+    /* Center all controlled images by default */
+    #img-framework, #img-rl-pipeline,
+    #img-data-collection, #img-pretrain, #img-ford,
+    #img-boxdyn-1, #img-boxdyn-2, #img-box-1, #img-box-2,
+    #img-door-1, #img-door-2, #img-stair-1, #img-stair-2,
+    #img-teleop-bottle, #img-teleop-door, #img-teleop-cart,
+    #img-sr-table, #img-cotrain, #img-scale {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Method section */
+    #img-framework        { width: 1000px; height: auto; }
+    #img-rl-pipeline      { width: 600px; height: auto; }
+
+    /* Pipeline cards */
+    #img-data-collection  { width: 400px; height: 400px; }
+    #img-pretrain         { width: 400px; height: 400px; }
+    #img-ford             { width: 400px; height: 400px; }
+
+    /* Hardware demo GIFs */
+    #img-boxdyn-1         { width: 100%; height: auto; }
+    #img-boxdyn-2         { width: 100%; height: auto; }
+    #img-box-1            { width: 100%; height: auto; }
+    #img-box-2            { width: 100%; height: auto; }
+    #img-door-1           { width: 100%; height: auto; }
+    #img-door-2           { width: 100%; height: auto; }
+    #img-stair-1          { width: 100%; height: auto; }
+    #img-stair-2          { width: 100%; height: auto; }
+
+    /* Teleoperation GIFs */
+    #img-teleop-bottle    { width: 100%; height: auto; }
+    #img-teleop-door      { width: 100%; height: auto; }
+    #img-teleop-cart      { width: 100%; height: auto; }
+
+    /* Results plots */
+    #img-sr-table         { width: 550px; height: auto; }
+    #img-cotrain          { width: 650px; height: auto; }
+    #img-scale            { width: 750px; height: auto; }
+
+    /* ── Unified sizes inside #main ─────────────────── */
+    #main .section-title,
+    #main .subsection-label,
+    #main .paper-title,
+    #main .video-box .video-label {
+      font-size: var(--title-size);
+      text-align: center;
+    }
+
+    #main p,
+    #main .abstract-text,
+    #main .caption,
+    #main .author-list,
+    #main .affiliations,
+    #main .equal-note,
+    #main .link-btn,
+    #main .img-card-label,
+    #main .teleop-card-label,
+    #main .pipeline-card-label,
+    #main .results-table,
+    #main .results-table th {
+      font-size: var(--body-size);
+    }
+
+    #main p,
+    #main .caption,
+    #main .abstract-text {
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: justify;
+    }
+
+    #main .author-list,
+    #main .affiliations,
+    #main .equal-note {
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════ HERO ════════ -->
+  <header class="hero">
+    <video class="hero-video" autoplay loop muted playsinline>
+      <source src="./assets/ours/videos/beach_volley_running_around.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-bottom">
+      <!-- <h1><span>REFINE-DP</span><br>Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning</h1> -->
+       <h1>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</h1>
+    </div>
+    <a href="#main" class="scroll-hint" aria-label="Scroll down">↓</a>
+  </header>
+
+  <!-- ════════ MAIN ════════ -->
+  <main id="main" class="container">
+
+    <!-- ── Authors ── -->
+    <section class="authors-section fade-up">
+      <p class="paper-title">Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</p>
+      <p class="author-list">
+        <a href="https://jnskkmhr.github.io/" target="_blank">Junnosuke Kamohara</a>,
+        Feiyang Wu, Andy Ningang Zong, 
+        Daniel I. Goldman, Yashwanth Nakka, Seth Hutchinson, Ye Zhao
+      </p>
+      <p class="affiliations">Institute for Robotics and Intelligent Machines, Georgia Institute of Technology</p>
+      <!-- <p class="equal-note"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Equal contribution</p> -->
+    </section>
+
+    <!-- ── Teaser Video ── -->
+    <section class="fade-up">
+      <div style="max-width:100%; margin:0 auto; aspect-ratio:16/9; border-radius:var(--radius); overflow:hidden;">
+        <video controls autoplay loop muted style="width:100%; height:100%; display:block; object-fit:cover;">
+            <!-- <source src="./assets/videos/FinalVideo-refineDP_S.mp4" type="video/mp4"> -->
+            <source src="" type="video/mp4">
+        </video>
+      </div>
+      <div class="links-bar">
+        <a class="link-btn" href="https://arxiv.org/html/2603.13707v2" target="_blank"><i class="ai ai-arxiv"></i> arXiv</a>
+        <span class="link-btn"><i class="fa-brands fa-github"></i> Code</span>
+        <button type="button" class="link-btn" onclick="openBibtexModal()"><i class="fa-solid fa-quote-left"></i> BibTeX</button>
+      </div>
+    </section>
+
+    <!-- ── Abstract ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Abstract</h2>
+      <p class="abstract-text">
+        <!-- Humanoid loco-manipulation requires coordinated high-level motion plans with stable, low-level whole-body
+        execution under complex robot-environment dynamics and long-horizon tasks. While diffusion policies (DPs)
+        show promise for learning from demonstrations, deploying them on humanoids poses critical challenges: the
+        motion planner trained offline is decoupled from the low-level controller, leading to poor command tracking,
+        compounding distribution shift, and task failures. The common approach of scaling demonstration data is
+        prohibitively expensive for high-dimensional humanoid systems. To address this challenge, we present
+        <strong>REFINE-DP</strong> (REinforcement learning FINE-tuning of Diffusion Policy), a hierarchical framework that jointly
+        optimizes a DP high-level planner and an RL-based low-level loco-manipulation controller. The DP is
+        fine-tuned via a PPO-based diffusion policy gradient to improve task success, while the controller is
+        simultaneously updated to accurately track the planner's evolving command distribution, reducing the
+        distributional mismatch that degrades motion quality. We validate <strong>REFINE-DP</strong> on a humanoid robot performing
+        long-horizon loco-manipulation tasks, including door traversal and long-horizon object transport. <strong>REFINE-DP</strong>
+        achieves over <strong>$90\%$</strong> success rate in simulation, even in extreme out-of-distribution cases (with respect to
+        the pre-trained policy), and enables smooth autonomous task execution in real-world dynamic environments.
+        Our proposed method substantially outperforms pre-trained DP baselines and demonstrates RL fine-tuning is
+        key to reliable humanoid loco-manipulation. -->
+        Humanoid locomotion on granular terrain remains a <strong>significant challenge</strong> due to its complex foot-terrain interaction dynamics that are difficult to model.
+        Existing approaches either ignore granular contact dynamics or incorporate simplified normal force models with heuristic tangential components.
+        In this work, we present a <strong>physics-grounded granular contact model</strong> based on three-dimensional resistive force theory (<strong>3D RFT</strong>) and efficiently simulate granular terrain for reinforcement learning (RL) training.
+        Unlike traditional rigid contact models and simplified granular contact models with ad-hoc heuristics, our contact solver produces physically accurate granular intrusion dynamics <strong>without resorting to heuristics</strong>.
+        It captures realistic penetration and tangential drag during training, enabling the policy to learn behaviors that transfer reliably to real-world granular terrain where rigid contact models fail.
+        To adapt to varying terrain conditions, we train a <strong>terrain-adaptive locomotion policy</strong> via teacher-student RL, using a variational autoencoder to encode terrain information into a compact latent representation.
+        Simulation studies using <strong>material point method (MPM)</strong> with NVIDIA Newton demonstrate that our method generalizes to unseen granular terrains, achieves a significantly higher success rate than baselines, and demonstrates zero-shot terrain identification and adaptation.
+        We further validate our approach through extensive hardware experiments across <strong>diverse real-world granular terrains</strong> including basalt, dry sand, and beach sand.
+        To the best of our knowledge, this is <strong>the first demonstration of agile humanoid locomotion</strong>, including running and jumping on real-world granular terrain.
+      </p>
+    </section>
+
+    <!-- ── Method ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Method</h2>
+
+      <div class="method-image">
+        <img id="img-framework" src="./assets/ours/images/system_diagram.png"
+             alt="REFINE-DP framework: (a) Data Collection, (b) Diffusion Policy Pre-training, (c) Joint RL Fine-tuning" />
+      </div>
+      <p class="caption">
+        System diagram of our proposed terrain-adaptive humanoid locomotion.
+        It has two-stage training where privileged teacher network is first trained with VAE terrain encoder and MLP policy.
+        Then, this teacher policy is distilled to deployable student policy by teacher-student RL. 
+      </p>
+
+      <h3 class="subsection-label">Granular Contact Modeling</h3>
+      <div class="method-image">
+        <img id="img-contact-model" src="./assets/ours/images/rft_overview.png"
+             alt="RL loco-manipulation pipeline: upper body tracks hand pose, lower body tracks foot placement" />
+      </div>
+      <p class="caption">
+        Granular terrain contact model definition. 
+        The terrain model predicts contact force and moment based on the intruder's penetration depth, velocity angle, and orientation.
+      </p>
+
+      <!-- <h3 class="subsection-label">Three-Stage Pipeline</h3>
+      <div class="pipeline-grid">
+        <div class="pipeline-card">
+          <div class="pipeline-stage-badge">1</div>
+          <img id="img-data-collection" src="./assets/images/datacollect.png" alt="Data Collection stage diagram" />
+          <div class="pipeline-card-label">Stage 1: Data Collection</div>
+        </div>
+        <div class="pipeline-card">
+          <div class="pipeline-stage-badge">2</div>
+          <img id="img-pretrain" src="./assets/images/pretrain.png" alt="Diffusion Policy Pre-training diagram" />
+          <div class="pipeline-card-label">Stage 2: Diffusion Policy Pre-training</div>
+        </div>
+        <div class="pipeline-card">
+          <div class="pipeline-stage-badge">3</div>
+          <img id="img-ford" src="./assets/images/jointopt.png" alt="REFINE-DP joint fine-tuning diagram" />
+          <div class="pipeline-card-label">Stage 3: REFINE-DP Joint Fine-tuning</div>
+        </div>
+      </div>
+
+      <h3 class="subsection-label">Low-level RL Loco-manipulation Controller</h3>
+      <div class="method-image">
+        <img id="img-rl-pipeline" src="./assets/images/rl_pipeline-1.png"
+             alt="RL loco-manipulation pipeline: upper body tracks hand pose, lower body tracks foot placement" />
+      </div> -->
+
+      <div class="callout">
+        <!-- <strong>Key Insight:</strong> Rather than scaling data to overcome distribution shift, REFINE-DP uses
+        reinforcement learning fine-tuning (RLFT) to directly update the diffusion policy via policy gradient.
+        With only 50 teleoperated trajectories, a pre-trained DP fine-tuned with REFINE-DP matches performance that
+        would otherwise require 1000+ demonstrations. -->
+        <strong>Key Insight:</strong> Training locomotion policies with granular contact model achieves successful running on diverse granular terrains where rigid contact policies fail.
+        Our heuristic-free contact model based on 3D RFT captures realistic penetration and tangential drag than baselines, thus facilitates the most stable policy under rough and deep granular terrains.
+        Furthermore, our teacher-student RL framework enables the policy to adapt to varying terrain stiffness by conditioning policy on estimated terrain stiffness.
+      </div>
+    </section>
+
+    <!-- ── Per-Terrain Velocity Tracking ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Per-Terrain Velocity Tracking</h2>
+      <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
+        We deploy the trained RL policy on a <strong>Unitree G1</strong> humanoid robot to validate our approach in
+        the real world, tracking a range of commanded forward velocities across terrains of varying granularity.
+      </p>
+
+      <!-- Terrain 1: Basalt -->
+      <h3 class="subsection-label">Terrain 1: Basalt</h3>
+      <div class="velocity-grid-wrapper">
+        <div class="velocity-grid" style="grid-template-columns: 90px repeat(3, 1fr);">
+          <div></div>
+          <div class="velocity-grid-header">Ours</div>
+          <div class="velocity-grid-header">PPO (3D RFT)</div>
+          <div class="velocity-grid-header">PPO (Rigid)</div>
+
+          <div class="velocity-grid-label">0.5 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
+
+          <div class="velocity-grid-label">1.0 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
+
+          <div class="velocity-grid-label">1.5 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
+
+          <div class="velocity-grid-label">2.0 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
+        </div>
+      </div>
+      <div class="method-image" style="max-width:100%; padding:1rem;">
+        <img id="img-basalt-vel-tracking" src="./assets/ours/images/basalt_vel_tracking.png" alt="Velocity tracking performance on basalt terrain" />
+      </div>
+      <p class="caption">
+        Velocity tracking on basalt gravel. The rigid-contact baseline (PPO Rigid) only completes the lowest
+        commanded speed; both RFT-based policies track all commanded velocities up to 2.0 m/s.
+      </p>
+
+      <!-- Terrain 2: Beach Volleyball -->
+      <h3 class="subsection-label">Terrain 2: Beach Volleyball</h3>
+      <div class="velocity-grid-wrapper">
+        <div class="velocity-grid" style="grid-template-columns: 90px repeat(3, 1fr);">
+          <div></div>
+          <div class="velocity-grid-header">Ours</div>
+          <div class="velocity-grid-header">PPO (3D RFT)</div>
+          <div class="velocity-grid-header">PPO (Rigid)</div>
+
+          <div class="velocity-grid-label">0.5 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
+
+          <div class="velocity-grid-label">1.0 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/1.0.mp4" type="video/mp4"></video></div>
+
+          <div class="velocity-grid-label">1.5 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/1.5.mp4" type="video/mp4"></video></div>
+
+          <div class="velocity-grid-label">2.0 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
+
+          <div class="velocity-grid-label">2.5 m/s</div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/2.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/2.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
+        </div>
+      </div>
+      <div class="method-image" style="max-width:100%; padding:1rem;">
+        <img id="img-beach-volleyball-vel-tracking" src="./assets/ours/images/beach_volleyball_vel_tracking.png" alt="Velocity tracking performance on beach volleyball terrain" />
+      </div>
+      <p class="caption">
+        Velocity tracking on a sand volleyball court. Both RFT-based policies scale up to 2.5 m/s, while the rigid
+        baseline is only stable up to 1.5 m/s.
+      </p>
+
+      <!-- Terrain 3: Beach -->
+      <h3 class="subsection-label">Terrain 3: Beach</h3>
+      <div class="img-grid cols-2">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (3D RFT)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/hardware/beach/PPO_Rigid.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Rigid)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT_zoom.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (3D RFT) — Zoom</div>
+        </div>
+        <div class="img-card empty"></div>
+      </div>
+      <p class="caption">
+        Deployment on loose beach sand, the most granular terrain tested.
+      </p>
+    </section>
+
+    <!-- ── Terrain-Transition ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Terrain Transition</h2>
+      <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
+        Because our policy conditions on estimated terrain stiffness, it can adapt online as the robot crosses
+        between terrains of different granularity within a single trajectory.
+      </p>
+      <div class="video-container">
+        <div class="video-box">
+          <p class="video-label">Ours</p>
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/hardware/terrain_transition/Ours.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-box">
+          <p class="video-label">PPO (3D RFT)</p>
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/hardware/terrain_transition/PPO_3D_RFT.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <p class="caption">
+        Our terrain-adaptive policy maintains stable locomotion through the transition, while the fixed-terrain
+        baseline struggles to adjust its gait.
+      </p>
+    </section>
+
+    <!-- ── Contact Model Ablation ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Contact Model Ablation</h2>
+      <h3 class="subsection-label">3D RFT best captures three-dimensional granular intrusion dynamics</h3>
+      <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
+        We evaluate the fidelity of our granular contact model with a box intrusion experiment, comparing the
+        predicted contact force and moment against baseline contact models and a Material Point Method (MPM)
+        reference simulation.
+      </p>
+      <div class="img-grid cols-3">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/3D_RFT_basalt_param.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">3D RFT (Ours)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/2D_RFT_basalt_param.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">2D RFT</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/MPM_basalt_param.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">MPM (Ground Truth)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/ConeDRFT_multi.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">Cone DRFT (Multi-Contact)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/ConeDRFT_single.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">Cone DRFT (Single-Contact)</div>
+        </div>
+      </div>
+
+      <div class="method-image" style="max-width:100%; padding:1rem;">
+        <img id="img-contact-model-ablation" src="./assets/ours/videos/simulation/contact_model/contact_model_ablation.png"
+             alt="Contact model ablation: predicted force/moment vs. MPM ground truth across contact models" />
+      </div>
+      <p class="caption">
+        Our 3D RFT contact model most closely matches the MPM reference across penetration depth, velocity angle,
+        and orientation, motivating its use for policy training.
+      </p>
+    </section>
+
+    <!-- ── Policy Performance per Contact Model ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Policy Performance per Contact Model</h2>
+      <h3 class="subsection-label">3D RFT facilitate the best RL policy performance</h3>
+      <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
+        We compare policies trained under different contact models across three simulated tasks spanning flat,
+        rough, and deep granular terrain.
+      </p>
+
+      <!-- Task 1: Circular Walking on Flat Terrain -->
+      <h3 class="subsection-label">Task 1: Circular Walking on Flat Terrain</h3>
+      <div class="img-grid cols-3">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_3D_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_Cone_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Cone RFT)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_heuristic_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Heuristic RFT)</div>
+        </div>
+      </div>
+      <p class="caption"><em>Placeholder videos — to be replaced with flat-terrain footage.</em></p>
+
+      <!-- Task 2: Circular Walking on Rough Terrain -->
+      <h3 class="subsection-label">Task 2: Circular Walking on Rough Terrain</h3>
+      <div class="img-grid cols-3">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_3D_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_Cone_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Cone RFT)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_heuristic_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Heuristic RFT)</div>
+        </div>
+      </div>
+
+      <!-- Task 3: Forward Walking on Deep Sand -->
+      <h3 class="subsection-label">Task 3: Forward Walking on Deep Sand</h3>
+      <div class="img-grid cols-3">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/deep_sand/PPO_3D_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/deep_sand/PPO_cone_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Cone RFT)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/policy_comparison/deep_sand/PPO_heuristic_RFT.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO (Heuristic RFT)</div>
+        </div>
+      </div>
+    </section>
+
+
+  <!-- ── Appendix ── -->
+  <section class="fade-up">
+    <h2 class="section-title">Appendix</h2>
+
+    <!-- Table 0: Observation and Action Space -->
+    <h3 class="subsection-label">Observation and Action Space</h3>
+    <div id="appendix-table-0" class="results-table-wrapper">
+      <table class="results-table appendix-table">
+        <thead>
+          <tr>
+            <th class="task-col">Observation</th>
+            <th>Actor</th>
+            <th>Critic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-row"><td colspan="3">Proprioceptive Observation ($\mathbf{o}_t$)</td></tr>
+          <tr><td class="task-col obs-col">Angular velocity ($\boldsymbol{\omega}_z$)</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Joint positions ($\mathbf{q}_j$)</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Joint velocities ($\dot{\mathbf{q}}_j$)</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Command velocity</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Projected gravity ($\mathbf{g}_b$)</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Previous action ($\mathbf{a}_{t-1}$)</td><td>&#10003;</td><td>&#10003;</td></tr>
+          <tr class="section-row"><td colspan="3">Terrain Latent</td></tr>
+          <tr><td class="task-col obs-col">Terrain latent ($\mathbf{z}_t$ / $\hat{\mathbf{z}}_t$)</td><td>&#10003;</td><td></td></tr>
+          <tr class="section-row"><td colspan="3">Privileged Observation ($\mathbf{s}_t$)</td></tr>
+          <tr><td class="task-col obs-col">Base linear velocity ($\mathbf{v}_{xy}$)</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Foot height, global frame ($\mathbf{p}_f$)</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Foot contact state ($\mathbf{c}_f$)</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Contact force ($\mathbf{F}_c$)</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Swing time since lift-off ($\mathrm{T_s}$)</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Media-dependent scaling coeff. ($\eta$)</td><td></td><td>&#10003;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">
+      <strong>Action Space:</strong> The action $\mathbf{a}_t \in \mathbb{R}^{29}$ represents the desired whole-body
+      joint position offsets from a nominal pose $\mathbf{q}_{0,j}$, i.e., $\mathbf{a}_t = \mathbf{q}_j^{\text{des}} - \mathbf{q}_{0,j}$.
+    </p>
+
+    <!-- Table 1: Reward Functions -->
+    <h3 class="subsection-label">Reward Functions</h3>
+    <div id="appendix-table-1" class="results-table-wrapper">
+      <table class="results-table appendix-table">
+        <thead>
+          <tr>
+            <th class="task-col">Reward</th>
+            <th class="form-col">Expression</th>
+            <th>Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-row"><td colspan="3">Task</td></tr>
+          <tr><td class="task-col term-col">Track lin. vel. XY</td><td class="task-col form-col">$\exp\!\left(-\|\mathbf{v}_{xy} - \mathbf{v}_{xy}^*\|^2_2 / \sigma^2\right)$</td><td>$4$</td></tr>
+          <tr><td class="task-col term-col">Track ang. vel. Z</td><td class="task-col form-col">$\exp\!\left(-\|\boldsymbol{\omega}_z - \boldsymbol{\omega}_z^*\|^2_2 / \sigma^2\right)$</td><td>$1$</td></tr>
+          <tr><td class="task-col term-col">Track yaw quat.</td><td class="task-col form-col">$\exp\!\left(-\|\mathbf{q}_z - \mathbf{q}_z^*\|^2_2 / \sigma^2\right)$</td><td>$4$</td></tr>
+          <tr><td class="task-col term-col">Track height</td><td class="task-col form-col">$\exp\!\left(-(\mathrm{z} - \mathrm{z}^*)^2 / \sigma^2\right)$</td><td>$0.1$</td></tr>
+          <tr><td class="task-col term-col">Termination</td><td class="task-col form-col">$-\mathrm{n}_\text{termination}$</td><td>$200$</td></tr>
+          <tr><td class="task-col term-col">Collision penalty</td><td class="task-col form-col">$-\mathrm{n}_\text{collision}$</td><td>$10$</td></tr>
+          <tr class="section-row"><td colspan="3">Regularization</td></tr>
+          <tr><td class="task-col term-col">Action rate</td><td class="task-col form-col">$\|\mathbf{a}_t - \mathbf{a}_{t-1}\|^2_2$</td><td>$-5\times10^{-3}$</td></tr>
+          <tr><td class="task-col term-col">Lin. vel. Z</td><td class="task-col form-col">$\mathrm{v}_\mathrm{z}^2$</td><td>$-1\times10^{-2}$</td></tr>
+          <tr><td class="task-col term-col">Ang. vel. XY</td><td class="task-col form-col">$\|\boldsymbol{\omega}_{xy}\|^2_2$</td><td>$-1\times10^{-4}$</td></tr>
+          <tr><td class="task-col term-col">Joint deviation</td><td class="task-col form-col">$\|\mathbf{q}_j - \mathbf{q}_{0,j}\|_1$</td><td>$-1.0$</td></tr>
+          <tr><td class="task-col term-col">Joint vel.</td><td class="task-col form-col">$\|\dot{\mathbf{q}}_j\|^2_2$</td><td>$-2\times10^{-4}$</td></tr>
+          <tr><td class="task-col term-col">Joint accel.</td><td class="task-col form-col">$\|\ddot{\mathbf{q}}_j\|^2_2$</td><td>$-2.5\times10^{-7}$</td></tr>
+          <tr><td class="task-col term-col">Joint energy</td><td class="task-col form-col">$\|\dot{\mathbf{q}}_j \odot \boldsymbol{\tau}_j\|^2_2$</td><td>$-1\times10^{-3}$</td></tr>
+          <tr class="section-row"><td colspan="3">Style</td></tr>
+          <tr><td class="task-col term-col">Straight base</td><td class="task-col form-col">$\|\mathbf{g}_b\|^2_2$</td><td>$-10$</td></tr>
+          <tr><td class="task-col term-col">Feet orientation</td><td class="task-col form-col">$\|\mathbf{g}_f\|^2_2$</td><td>$-1.0$</td></tr>
+          <tr><td class="task-col term-col">Feet slide</td><td class="task-col form-col">$\mathrm{c_f} \cdot \mathbf{v}_f$</td><td>$-0.01$</td></tr>
+          <tr><td class="task-col term-col">Feet air time</td><td class="task-col form-col">$\max(\mathrm{T_s}, 0.5)$</td><td>$0.5$</td></tr>
+          <tr><td class="task-col term-col">No fly</td><td class="task-col form-col">$\mathrm{n}_\text{zero-contact}$</td><td>$-0.5$</td></tr>
+          <tr><td class="task-col term-col">Contact impact</td><td class="task-col form-col">$\mathbb{1}_\text{first-contact} \cdot \mathrm{F_z}$</td><td>$-5\times10^{-3}$</td></tr>
+          <tr><td class="task-col term-col">Feet distance</td><td class="task-col form-col">$\|\mathbf{p}_{f,L} - \mathbf{p}_{f,R}\|^2_{xy}$</td><td>$-2$</td></tr>
+          <tr><td class="task-col term-col">Feet clearance</td><td class="task-col form-col">$\|\mathbf{p}_f - \mathbf{p}_f^{\text{des}}\|_z^2$</td><td>$-2$</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table 2: Domain Randomization -->
+    <h3 class="subsection-label">Domain Randomization</h3>
+    <div id="appendix-table-2" class="results-table-wrapper">
+      <table class="results-table appendix-table">
+        <thead>
+          <tr>
+            <th class="task-col">Parameter</th>
+            <th>Range</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-row"><td colspan="3">Robot</td></tr>
+          <tr><td class="task-col term-col">Added base mass</td><td>$[-5.0, 5.0]$</td><td>kg</td></tr>
+          <tr><td class="task-col term-col">Center of mass offset</td><td>$[-3.0, 3.0]$</td><td>cm</td></tr>
+          <tr><td class="task-col term-col">Actuator gain scale</td><td>$[0.9, 1.1]$</td><td>—</td></tr>
+          <tr><td class="task-col term-col">Push robot</td><td>$[-1.0, 1.0]$</td><td>m/s</td></tr>
+          <tr class="section-row"><td colspan="3">Terrain</td></tr>
+          <tr><td class="task-col term-col">Internal friction</td><td>$[0.1, 1.0]$</td><td>—</td></tr>
+          <tr><td class="task-col term-col">Surface friction</td><td>$[0.1, 1.0]$</td><td>—</td></tr>
+          <tr><td class="task-col term-col">Material density</td><td>$[1000.0, 3000.0]$</td><td>kg/m³</td></tr>
+          <tr><td class="task-col term-col">Packing ratio</td><td>$[0.5, 1.0]$</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ════════ FOOTER ════════ -->
+  <footer>
+    <p>
+      Website inspired by <a href="https://relic-locoman.rai-inst.com/">ReLIC</a> and <a href="https://www.videomimic.net/">VideoMimic</a>.
+    </p>
+  </footer>
+
+  <!-- ════════ BibTeX Modal ════════ -->
+  <div class="modal-overlay" id="bibtexModal" onclick="if (event.target === this) closeBibtexModal();">
+    <div class="modal-box">
+      <button type="button" class="modal-close" onclick="closeBibtexModal()" aria-label="Close">&times;</button>
+      <h3 class="modal-title">Cite this work</h3>
+      <div class="bibtex-block">
+        <button type="button" class="copy-btn" id="copyBtn" onclick="copyBibtex()">Copy</button>
+        <pre id="bibtexCode">@article{gu2026refinedp,
+  title={REFINE-DP: Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning},
+  author={Gu, Zhaoyuan and Chen, Yipu and Chai, Zimeng and Cueva, Alfred and Nguyen, Thong and Wu, Yifan and Xue, Huishu and Kim, Minji and Legene, Isaac and Liu, Fukang and Kim, Matthew and Barula, Ayan and Chen, Yongxin and Zhao, Ye},
+  journal={arXiv preprint arXiv:2603.13707},
+  year={2026}
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ JS ════════ -->
+  <script>
+    /* ── Copy BibTeX ─────────────────────────────── */
+    function copyBibtex() {
+      const text = document.getElementById('bibtexCode').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1800);
+      });
+    }
+
+    /* ── BibTeX Modal ────────────────────────────── */
+    function openBibtexModal() {
+      document.getElementById('bibtexModal').classList.add('open');
+    }
+    function closeBibtexModal() {
+      document.getElementById('bibtexModal').classList.remove('open');
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeBibtexModal();
+    });
+
+    /* ── Fade-in on scroll ───────────────────────── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
