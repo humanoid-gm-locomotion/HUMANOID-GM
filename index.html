@@ -134,6 +134,32 @@
       50% { transform: translateY(6px); }
     }
 
+    /* Hero video prev/next nav */
+    .hero-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,.35);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+
+    .hero-nav:hover {
+      background: rgba(0,0,0,.6);
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .hero-nav-prev { left: 24px; }
+    .hero-nav-next { right: 24px; }
+
     /* ── Container ─────────────────────────────────── */
     .container {
       max-width: var(--max-w);
@@ -496,6 +522,41 @@
     .img-card.empty img {
       width: 32px;
       height: 32px;
+    }
+
+    /* ── Zoom Callout (magnified inset) ────────────── */
+    .zoom-video-wrapper {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .zoom-main-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .zoom-inset {
+      position: absolute;
+      top: 3%;
+      left: 3%;
+      width: 34%;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,.45);
+      background: #000;
+    }
+
+    .zoom-inset video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     /* ── Method Image ─────────────────────────────── */
@@ -864,10 +925,12 @@
 
   <!-- ════════ HERO ════════ -->
   <header class="hero">
-    <video class="hero-video" autoplay loop muted playsinline>
+    <video id="heroVideo" class="hero-video" autoplay muted playsinline>
       <source src="./assets/ours/videos/beach_volley_running_around.mp4" type="video/mp4" />
     </video>
     <div class="hero-overlay"></div>
+    <button type="button" class="hero-nav hero-nav-prev" id="heroPrev" aria-label="Previous video">&#10094;</button>
+    <button type="button" class="hero-nav hero-nav-next" id="heroNext" aria-label="Next video">&#10095;</button>
     <div class="hero-bottom">
        <h1>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</h1>
     </div>
@@ -1043,9 +1106,16 @@
       <h3 class="subsection-label">Terrain 3: Beach</h3>
       <div class="img-grid cols-2">
         <div class="img-card">
-          <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT.mp4" type="video/mp4">
-          </video>
+          <div class="zoom-video-wrapper">
+            <video id="beachZoomMain" class="zoom-main-video" controls autoplay loop muted playsinline>
+              <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT.mp4" type="video/mp4">
+            </video>
+            <div class="zoom-inset">
+              <video id="beachZoomInset" autoplay loop muted playsinline>
+                <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT_zoom.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
           <div class="img-card-label">PPO (3D RFT)</div>
         </div>
         <div class="img-card">
@@ -1054,16 +1124,10 @@
           </video>
           <div class="img-card-label">PPO (Rigid)</div>
         </div>
-        <div class="img-card">
-          <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT_zoom.mp4" type="video/mp4">
-          </video>
-          <div class="img-card-label">PPO (3D RFT) — Zoom</div>
-        </div>
-        <div class="img-card empty"></div>
       </div>
       <p class="caption">
-        Deployment on loose beach sand, the most granular terrain tested.
+        Deployment on loose beach sand, the most granular terrain tested. The inset highlights a magnified view of
+        foot-terrain contact.
       </p>
     </section>
 
@@ -1390,6 +1454,77 @@
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ── Hero Video Shuffle ──────────────────────── */
+    (function () {
+      const heroVideos = [
+        './assets/ours/videos/beach_volley_running_around.mp4',
+        './assets/ours/videos/hardware/beach/beach_no_gantry.mp4',
+        './assets/ours/videos/hardware/beach/drone.mp4'
+      ];
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      const heroVideo = document.getElementById('heroVideo');
+      const prevBtn = document.getElementById('heroPrev');
+      const nextBtn = document.getElementById('heroNext');
+      if (!heroVideo) return;
+
+      let playlist = shuffle(heroVideos);
+      let index = 0;
+
+      function playCurrent() {
+        heroVideo.querySelector('source').src = playlist[index];
+        heroVideo.load();
+        heroVideo.play().catch(() => {});
+      }
+
+      function advance(step) {
+        index += step;
+        if (index >= playlist.length) {
+          playlist = shuffle(heroVideos);
+          index = 0;
+        } else if (index < 0) {
+          index = playlist.length - 1;
+        }
+        playCurrent();
+      }
+
+      heroVideo.addEventListener('ended', () => advance(1));
+      if (prevBtn) prevBtn.addEventListener('click', () => advance(-1));
+      if (nextBtn) nextBtn.addEventListener('click', () => advance(1));
+
+      playCurrent();
+    })();
+
+    /* ── Beach Zoom Video Sync ───────────────────── */
+    (function () {
+      const main = document.getElementById('beachZoomMain');
+      const inset = document.getElementById('beachZoomInset');
+      if (!main || !inset) return;
+
+      function syncToMain() {
+        if (Math.abs(inset.currentTime - main.currentTime) > 0.15) {
+          inset.currentTime = main.currentTime;
+        }
+      }
+
+      main.addEventListener('seeking', syncToMain);
+      main.addEventListener('seeked', syncToMain);
+      main.addEventListener('timeupdate', syncToMain);
+      main.addEventListener('play', () => {
+        inset.currentTime = main.currentTime;
+        inset.play().catch(() => {});
+      });
+      main.addEventListener('pause', () => inset.pause());
+    })();
   </script>
 
 </body>
