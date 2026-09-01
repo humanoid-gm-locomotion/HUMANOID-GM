@@ -39,5 +39,7 @@ We deploy the trained RL policy on a Unitree G1 humanoid robot to validate our a
 * N/A is good idea? Is it better to replace with assets/ours/icons/fail.png and Fail text? 
 * Can you replace appendix with tables in /home/jkamohara3/isaac/ral26/RAL/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/Appendix.tex ? You might need to figure out macro symbols by refering to /home/jkamohara3/isaac/ral26/RAL/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/shortcut.tex -->
 
-* Can you also add observation tables ? You can refer to paragraphs in /home/jkamohara3/isaac/ral26/RAL/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/Method.tex. 
-* Can you add assets/ours/images/basalt_vel_tracking.png and assets/ours/images/beach_volleyball_vel_tracking.png after each video tile? 
+<!-- * Can you also add observation tables ? You can refer to paragraphs in /home/jkamohara3/isaac/ral26/RAL/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/Method.tex. 
+* Can you add assets/ours/images/basalt_vel_tracking.png and assets/ours/images/beach_volleyball_vel_tracking.png after each video tile?  -->
+
+* observation table needs a quite a bit of improvement. Basically, it should have teacher actor, teacher encoder, student actor, student encoder, and critic. Look at /Users/jnskkmhr/lab_ws/ral_26/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/method.tex for reference. If 5 items are two long, you can make table horizontally scrolable. 

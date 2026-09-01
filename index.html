@@ -83,6 +83,23 @@
       z-index: 0;
     }
 
+    /* 2x2 tile of cover videos filling the hero */
+    .hero-video-grid {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      z-index: 0;
+    }
+
+    .hero-video-grid video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     /* Subtle dark overlay so text is legible */
     .hero-overlay {
       position: absolute;
@@ -91,14 +108,14 @@
       z-index: 1;
     }
 
-    /* Gradient band at the bottom — title lives here */
-    .hero-bottom {
+    /* Gradient band at the top-left — title lives here */
+    .hero-top {
       position: absolute;
-      bottom: 0;
+      top: 0;
       left: 0;
       width: 100%;
-      padding: 60px 40px 36px;
-      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
+      padding: 36px 40px 80px;
+      background: linear-gradient(to bottom, rgba(0,0,0,.75) 0%, transparent 100%);
       z-index: 2;
     }
 
@@ -133,32 +150,6 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(6px); }
     }
-
-    /* Hero video prev/next nav */
-    .hero-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(0,0,0,.35);
-      color: #fff;
-      font-size: 1.1rem;
-      line-height: 1;
-      cursor: pointer;
-      transition: background .2s, transform .2s;
-    }
-
-    .hero-nav:hover {
-      background: rgba(0,0,0,.6);
-      transform: translateY(-50%) scale(1.08);
-    }
-
-    .hero-nav-prev { left: 24px; }
-    .hero-nav-next { right: 24px; }
 
     /* ── Container ─────────────────────────────────── */
     .container {
@@ -283,6 +274,15 @@
 
     .img-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
     .img-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+    #contact-model-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #contact-model-grid .img-card {
+      flex: 0 1 calc((100% - 2rem) / 3);
+    }
 
     .img-card {
       position: relative;
@@ -719,6 +719,12 @@
     /* ── Appendix Table Width Controls ──────────────── */
     #appendix-table-0, #appendix-table-1, #appendix-table-2 { width: fit-content; margin-left: auto; margin-right: auto; }
 
+    /* Equal-width columns for the Observation/Action Space table */
+    #appendix-table-0 table { table-layout: fixed; }
+    #appendix-table-0 th, #appendix-table-0 td { width: 110px; }
+    #appendix-table-0 th.task-col, #appendix-table-0 td.task-col,
+    #appendix-table-0 th.obs-col, #appendix-table-0 td.obs-col { width: 300px; }
+
     /* ── BibTeX ────────────────────────────────────── */
     .bibtex-block {
       position: relative;
@@ -925,13 +931,22 @@
 
   <!-- ════════ HERO ════════ -->
   <header class="hero">
-    <video id="heroVideo" class="hero-video" autoplay muted playsinline>
-      <source src="./assets/ours/videos/beach_volley_running_around.mp4" type="video/mp4" />
-    </video>
+    <div class="hero-video-grid">
+      <video autoplay muted loop playsinline>
+        <source src="./assets/cover/drone.mp4" type="video/mp4" />
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="./assets/cover/beach.mp4" type="video/mp4" />
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="./assets/cover/basalt.mp4" type="video/mp4" />
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="./assets/cover/campus.mp4" type="video/mp4" />
+      </video>
+    </div>
     <div class="hero-overlay"></div>
-    <button type="button" class="hero-nav hero-nav-prev" id="heroPrev" aria-label="Previous video">&#10094;</button>
-    <button type="button" class="hero-nav hero-nav-next" id="heroNext" aria-label="Next video">&#10095;</button>
-    <div class="hero-bottom">
+    <div class="hero-top">
        <h1>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</h1>
     </div>
     <a href="#main" class="scroll-hint" aria-label="Scroll down">↓</a>
@@ -943,12 +958,13 @@
     <!-- ── Authors ── -->
     <section class="authors-section fade-up">
       <p class="paper-title">Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</p>
-      <p class="author-list">
+      <p class="author-list">Under Review</p>
+      <!-- <p class="author-list">
         <a href="https://jnskkmhr.github.io/" target="_blank">Junnosuke Kamohara</a>,
         Feiyang Wu, Andy Ningan Zong, 
         Daniel I. Goldman, Yashwanth Nakka, Seth Hutchinson, Ye Zhao
       </p>
-      <p class="affiliations">Institute for Robotics and Intelligent Machines, Georgia Institute of Technology</p>
+      <p class="affiliations">Institute for Robotics and Intelligent Machines, Georgia Institute of Technology</p> -->
       <!-- <p class="equal-note"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Equal contribution</p> -->
     </section>
 
@@ -963,6 +979,15 @@
         <a class="link-btn" href="https://arxiv.org/html/2603.13707v2" target="_blank"><i class="ai ai-arxiv"></i> arXiv</a>
         <span class="link-btn"><i class="fa-brands fa-github"></i> Code</span>
         <button type="button" class="link-btn" onclick="openBibtexModal()"><i class="fa-solid fa-quote-left"></i> BibTeX</button>
+      </div>
+      <!-- <div class="callout">
+        <strong>Key Insight:</strong> Training locomotion policies with granular contact model achieves successful running on diverse granular terrains where rigid contact policies fail.
+        Our heuristic-free contact model based on 3D RFT captures realistic penetration and tangential drag than baselines, thus facilitates the most stable policy under rough and deep granular terrains.
+        Furthermore, our teacher-student RL framework enables the policy to adapt to varying terrain stiffness by conditioning policy on estimated terrain stiffness.
+      </div> -->
+      <div class="callout">
+        <strong>TL;DR:</strong> 
+        With a <strong>physically-grounded granular contact model</strong> based on <strong>3D RFT</strong> and a <strong>teacher-student RL</strong> framework, we demonstrate the <strong>first successful agile humanoid locomotion</strong> on diverse real-world granular terrains.
       </div>
     </section>
 
@@ -1006,11 +1031,11 @@
         The terrain model predicts contact force and moment based on the intruder's penetration depth, velocity angle, and orientation.
       </p>
 
-      <div class="callout">
+      <!-- <div class="callout">
         <strong>Key Insight:</strong> Training locomotion policies with granular contact model achieves successful running on diverse granular terrains where rigid contact policies fail.
         Our heuristic-free contact model based on 3D RFT captures realistic penetration and tangential drag than baselines, thus facilitates the most stable policy under rough and deep granular terrains.
         Furthermore, our teacher-student RL framework enables the policy to adapt to varying terrain stiffness by conditioning policy on estimated terrain stiffness.
-      </div>
+      </div> -->
     </section>
 
     <!-- ── Per-Terrain Velocity Tracking ── -->
@@ -1051,13 +1076,13 @@
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
         </div>
       </div>
-      <div class="method-image" style="max-width:100%; padding:1rem;">
+      <div class="method-image" style="max-width:60%; padding:1rem;">
         <img id="img-basalt-vel-tracking" src="./assets/ours/images/basalt_vel_tracking.png" alt="Velocity tracking performance on basalt terrain" />
       </div>
-      <p class="caption">
+      <!-- <p class="caption">
         Velocity tracking on basalt gravel. The rigid-contact baseline (PPO Rigid) only completes the lowest
         commanded speed; both RFT-based policies track all commanded velocities up to 2.0 m/s.
-      </p>
+      </p> -->
 
       <!-- Terrain 2: Beach Volleyball -->
       <h3 class="subsection-label">Terrain 2: Beach Volleyball</h3>
@@ -1094,13 +1119,13 @@
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
         </div>
       </div>
-      <div class="method-image" style="max-width:100%; padding:1rem;">
+      <div class="method-image" style="max-width:60%; padding:1rem;">
         <img id="img-beach-volleyball-vel-tracking" src="./assets/ours/images/beach_volleyball_vel_tracking.png" alt="Velocity tracking performance on beach volleyball terrain" />
       </div>
-      <p class="caption">
+      <!-- <p class="caption">
         Velocity tracking on a sand volleyball court. Both RFT-based policies scale up to 2.5 m/s, while the rigid
         baseline is only stable up to 1.5 m/s.
-      </p>
+      </p> -->
 
       <!-- Terrain 3: Beach -->
       <h3 class="subsection-label">Terrain 3: Beach</h3>
@@ -1125,18 +1150,19 @@
           <div class="img-card-label">PPO (Rigid)</div>
         </div>
       </div>
-      <p class="caption">
+      <!-- <p class="caption">
         Deployment on loose beach sand, the most granular terrain tested. The inset highlights a magnified view of
         foot-terrain contact.
-      </p>
+      </p> -->
     </section>
 
     <!-- ── Terrain-Transition ── -->
     <section class="fade-up">
       <h2 class="section-title">Terrain Transition</h2>
       <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
-        Because our policy conditions on estimated terrain stiffness, it can adapt online as the robot crosses
+        Because our policy conditions on estimated terrain stiffness, it adapts online as the robot crosses
         between terrains of different granularity within a single trajectory.
+        Ours maintains stable locomotion through the transition, while the fixed-terrain baseline struggles to adjust its gait.
       </p>
       <div class="video-container">
         <div class="video-box">
@@ -1152,10 +1178,6 @@
           </video>
         </div>
       </div>
-      <p class="caption">
-        Our terrain-adaptive policy maintains stable locomotion through the transition, while the fixed-terrain
-        baseline struggles to adjust its gait.
-      </p>
     </section>
 
     <!-- ── Contact Model Ablation ── -->
@@ -1163,11 +1185,18 @@
       <h2 class="section-title">Contact Model Ablation</h2>
       <h3 class="subsection-label">3D RFT best captures three-dimensional granular intrusion dynamics</h3>
       <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
-        We evaluate the fidelity of our granular contact model with a box intrusion experiment, comparing the
-        predicted contact force and moment against baseline contact models and a Material Point Method (MPM)
-        reference simulation.
+        We evaluate the fidelity of our granular contact model with a single rigid body intrusion experiment. 
+        We compare (1) horizontal travel distance and sinkage, 
+        and (2) ground reaction forces against baseline contact models and a Material Point Method (MPM) reference simulation.
+        3D RFT achieves <strong> closest horizontal travel distance and sinkage</strong> to the MPM simulation, and GRF also presents the best agreement with MPM.
       </p>
-      <div class="img-grid cols-3">
+      <div class="img-grid cols-3" id="contact-model-grid">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/contact_model/MPM_basalt_param.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">MPM (Reference Data)</div>
+        </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/contact_model/3D_RFT_basalt_param.mp4" type="video/mp4">
@@ -1178,36 +1207,30 @@
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/contact_model/2D_RFT_basalt_param.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">2D RFT</div>
-        </div>
-        <div class="img-card">
-          <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/contact_model/MPM_basalt_param.mp4" type="video/mp4">
-          </video>
-          <div class="img-card-label">MPM (Ground Truth)</div>
+          <div class="img-card-label">Heuristic RFT</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/contact_model/ConeDRFT_multi.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">Cone DRFT (Multi-Contact)</div>
+          <div class="img-card-label">Cone RFT (multi-point contact)</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/contact_model/ConeDRFT_single.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">Cone DRFT (Single-Contact)</div>
+          <div class="img-card-label">Cone RFT (single-point contact)</div>
         </div>
       </div>
 
       <div class="method-image" style="max-width:100%; padding:1rem;">
-        <img id="img-contact-model-ablation" src="./assets/ours/videos/simulation/contact_model/contact_model_ablation.png"
+        <img id="img-contact-model-ablation" src="./assets/ours/images/contact_model_comparison_v2.png"
              alt="Contact model ablation: predicted force/moment vs. MPM ground truth across contact models" />
       </div>
-      <p class="caption">
+      <!-- <p class="caption">
         Our 3D RFT contact model most closely matches the MPM reference across penetration depth, velocity angle,
         and orientation, motivating its use for policy training.
-      </p>
+      </p> -->
     </section>
 
     <!-- ── Policy Performance per Contact Model ── -->
@@ -1217,6 +1240,7 @@
       <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
         We compare policies trained under different contact models across three simulated tasks spanning flat,
         rough, and deep granular terrain.
+        As terrain becomes <strong>rougher and softer</strong>, 3D RFT policy maintains <strong>tracking performance</strong> while other baselines <strong>degrade and deviates a lot from command</strong>.
       </p>
 
       <!-- Task 1: Circular Walking on Flat Terrain -->
@@ -1224,24 +1248,23 @@
       <div class="img-grid cols-3">
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_3D_RFT.mp4" type="video/mp4">
+            <source src="./assets/ours/videos/simulation/policy_comparison/flat_terrain/PPO_3D_RFT.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+          <div class="img-card-label">PPO (3D RFT)</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_Cone_RFT.mp4" type="video/mp4">
+            <source src="./assets/ours/videos/simulation/policy_comparison/flat_terrain/PPO_Cone_RFT.mp4" type="video/mp4">
           </video>
           <div class="img-card-label">PPO (Cone RFT)</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_heuristic_RFT.mp4" type="video/mp4">
+            <source src="./assets/ours/videos/simulation/policy_comparison/flat_terrain/PPO_heuristic_RFT.mp4" type="video/mp4">
           </video>
           <div class="img-card-label">PPO (Heuristic RFT)</div>
         </div>
       </div>
-      <p class="caption"><em>Placeholder videos — to be replaced with flat-terrain footage.</em></p>
 
       <!-- Task 2: Circular Walking on Rough Terrain -->
       <h3 class="subsection-label">Task 2: Circular Walking on Rough Terrain</h3>
@@ -1250,7 +1273,7 @@
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/policy_comparison/rough_terrain/PPO_3D_RFT.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+          <div class="img-card-label">PPO (3D RFT)</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
@@ -1273,7 +1296,7 @@
           <video controls autoplay loop muted playsinline>
             <source src="./assets/ours/videos/simulation/policy_comparison/deep_sand/PPO_3D_RFT.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">PPO (3D RFT, Ours)</div>
+          <div class="img-card-label">PPO (3D RFT)</div>
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
@@ -1302,27 +1325,33 @@
         <thead>
           <tr>
             <th class="task-col">Observation</th>
-            <th>Actor</th>
+            <th>Teacher Actor</th>
+            <th>Teacher Encoder</th>
+            <th>Student Actor</th>
+            <th>Student Encoder</th>
             <th>Critic</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="section-row"><td colspan="3">Proprioceptive Observation ($\mathbf{o}_t$)</td></tr>
-          <tr><td class="task-col obs-col">Angular velocity ($\boldsymbol{\omega}_z$)</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Joint positions ($\mathbf{q}_j$)</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Joint velocities ($\dot{\mathbf{q}}_j$)</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Command velocity</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Projected gravity ($\mathbf{g}_b$)</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Previous action ($\mathbf{a}_{t-1}$)</td><td>&#10003;</td><td>&#10003;</td></tr>
-          <tr class="section-row"><td colspan="3">Terrain Latent</td></tr>
-          <tr><td class="task-col obs-col">Terrain latent ($\mathbf{z}_t$ / $\hat{\mathbf{z}}_t$)</td><td>&#10003;</td><td></td></tr>
-          <tr class="section-row"><td colspan="3">Privileged Observation ($\mathbf{s}_t$)</td></tr>
-          <tr><td class="task-col obs-col">Base linear velocity ($\mathbf{v}_{xy}$)</td><td></td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Foot height, global frame ($\mathbf{p}_f$)</td><td></td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Foot contact state ($\mathbf{c}_f$)</td><td></td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Contact force ($\mathbf{F}_c$)</td><td></td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Swing time since lift-off ($\mathrm{T_s}$)</td><td></td><td>&#10003;</td></tr>
-          <tr><td class="task-col obs-col">Media-dependent scaling coeff. ($\eta$)</td><td></td><td>&#10003;</td></tr>
+          <tr class="section-row"><td colspan="6">Proprioceptive Observation ($\mathbf{o}_t$)</td></tr>
+          <tr><td class="task-col obs-col">Angular velocity ($\boldsymbol{\omega}_z$)</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Joint positions ($\mathbf{q}_j$)</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Joint velocities ($\dot{\mathbf{q}}_j$)</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Command velocity</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Projected gravity ($\mathbf{g}_b$)</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Previous action ($\mathbf{a}_{t-1}$)</td><td>&#10003;</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td></tr>
+          <tr class="section-row"><td colspan="6">Proprioceptive History ($\mathbf{o}_{t-N:t}$)</td></tr>
+          <tr><td class="task-col obs-col">$N$-step history of proprioceptive states</td><td></td><td>&#10003;</td><td></td><td>&#10003;</td><td></td></tr>
+          <tr class="section-row"><td colspan="6">Terrain Latent</td></tr>
+          <tr><td class="task-col obs-col">Teacher latent ($\mathbf{z}_t$)</td><td>&#10003;</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td class="task-col obs-col">Student latent ($\hat{\mathbf{z}}_t$)</td><td></td><td></td><td>&#10003;</td><td></td><td></td></tr>
+          <tr class="section-row"><td colspan="6">Privileged Observation ($\mathbf{s}_t$)</td></tr>
+          <tr><td class="task-col obs-col">Base linear velocity ($\mathbf{v}_{xy}$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Foot height, global frame ($\mathbf{p}_f$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Foot contact state ($\mathbf{c}_f$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Contact force ($\mathbf{F}_c$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Swing time since lift-off ($\mathrm{T_s}$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+          <tr><td class="task-col obs-col">Media-dependent scaling coeff. ($\eta$)</td><td></td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
         </tbody>
       </table>
     </div>
@@ -1455,54 +1484,6 @@
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-    /* ── Hero Video Shuffle ──────────────────────── */
-    (function () {
-      const heroVideos = [
-        './assets/ours/videos/beach_volley_running_around.mp4',
-        './assets/ours/videos/hardware/beach/beach_no_gantry.mp4',
-        './assets/ours/videos/hardware/beach/drone.mp4'
-      ];
-
-      function shuffle(arr) {
-        const a = arr.slice();
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-      }
-
-      const heroVideo = document.getElementById('heroVideo');
-      const prevBtn = document.getElementById('heroPrev');
-      const nextBtn = document.getElementById('heroNext');
-      if (!heroVideo) return;
-
-      let playlist = shuffle(heroVideos);
-      let index = 0;
-
-      function playCurrent() {
-        heroVideo.querySelector('source').src = playlist[index];
-        heroVideo.load();
-        heroVideo.play().catch(() => {});
-      }
-
-      function advance(step) {
-        index += step;
-        if (index >= playlist.length) {
-          playlist = shuffle(heroVideos);
-          index = 0;
-        } else if (index < 0) {
-          index = playlist.length - 1;
-        }
-        playCurrent();
-      }
-
-      heroVideo.addEventListener('ended', () => advance(1));
-      if (prevBtn) prevBtn.addEventListener('click', () => advance(-1));
-      if (nextBtn) nextBtn.addEventListener('click', () => advance(1));
-
-      playCurrent();
-    })();
 
     /* ── Beach Zoom Video Sync ───────────────────── */
     (function () {
