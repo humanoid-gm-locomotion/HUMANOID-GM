@@ -2,3 +2,7 @@
 .tokensave
 .DS_Store
 *.pptx
+scripts/.venv/
+assets/ours/videos/hardware_originals/
+presentation
+scripts

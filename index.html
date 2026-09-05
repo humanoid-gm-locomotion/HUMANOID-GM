@@ -464,6 +464,7 @@
     .velocity-grid-wrapper {
       overflow-x: auto;
       margin: 1.5rem 0;
+      zoom: 1.2;
     }
 
     .velocity-grid {
@@ -571,6 +572,13 @@
     }
 
     .method-image img { display: block; }
+
+    .method-image-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .method-image-row img { flex: 1 1 0; width: 100%; min-width: 0; }
 
     .video-container {
         display: flex;
@@ -933,16 +941,16 @@
   <header class="hero">
     <div class="hero-video-grid">
       <video autoplay muted loop playsinline>
-        <source src="./assets/cover/drone.mp4" type="video/mp4" />
+        <source src="./assets/cover_blur/drone.mp4" type="video/mp4" />
       </video>
       <video autoplay muted loop playsinline>
-        <source src="./assets/cover/beach.mp4" type="video/mp4" />
+        <source src="./assets/cover_blur/beach.mp4" type="video/mp4" />
       </video>
       <video autoplay muted loop playsinline>
-        <source src="./assets/cover/basalt.mp4" type="video/mp4" />
+        <source src="./assets/cover_blur/basalt.mp4" type="video/mp4" />
       </video>
       <video autoplay muted loop playsinline>
-        <source src="./assets/cover/campus.mp4" type="video/mp4" />
+        <source src="./assets/cover_blur/campus.mp4" type="video/mp4" />
       </video>
     </div>
     <div class="hero-overlay"></div>
@@ -958,7 +966,7 @@
     <!-- ── Authors ── -->
     <section class="authors-section fade-up">
       <p class="paper-title">Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</p>
-      <p class="author-list">Under Review</p>
+      <p class="author-list">anonymous author(s)</p>
       <!-- <p class="author-list">
         <a href="https://jnskkmhr.github.io/" target="_blank">Junnosuke Kamohara</a>,
         Feiyang Wu, Andy Ningan Zong, 
@@ -976,8 +984,8 @@
         </video>
       </div>
       <div class="links-bar">
-        <a class="link-btn" href="https://arxiv.org/html/2603.13707v2" target="_blank"><i class="ai ai-arxiv"></i> arXiv</a>
-        <span class="link-btn"><i class="fa-brands fa-github"></i> Code</span>
+        <a class="link-btn" href="" target="_blank"><i class="ai ai-arxiv"></i> arXiv</a>
+        <span class="link-btn"><i class="fa-brands fa-github"></i> Code (Comming Soon)</span>
         <button type="button" class="link-btn" onclick="openBibtexModal()"><i class="fa-solid fa-quote-left"></i> BibTeX</button>
       </div>
       <!-- <div class="callout">
@@ -987,7 +995,8 @@
       </div> -->
       <div class="callout">
         <strong>TL;DR:</strong> 
-        With a <strong>physically-grounded granular contact model</strong> based on <strong>3D RFT</strong> and a <strong>teacher-student RL</strong> framework, we demonstrate the <strong>first successful agile humanoid locomotion</strong> on diverse real-world granular terrains.
+        We present the <strong>first successful humanoid running</strong> demonstrations on diverse real-world granular terrains.
+        <!-- With a <strong>physically-grounded granular contact model</strong> based on <strong>3D RFT</strong> and a <strong>teacher-student RL</strong> framework, we demonstrate the <strong>first successful agile humanoid locomotion</strong> on diverse real-world granular terrains. -->
       </div>
     </section>
 
@@ -1003,7 +1012,7 @@
         To adapt to varying terrain conditions, we train a <strong>terrain-adaptive locomotion policy</strong> via teacher-student RL, using a variational autoencoder to encode terrain information into a compact latent representation.
         Simulation studies using <strong>material point method (MPM)</strong> with NVIDIA Newton demonstrate that our method generalizes to unseen granular terrains, achieves a significantly higher success rate than baselines, and demonstrates zero-shot terrain identification and adaptation.
         We further validate our approach through extensive hardware experiments across <strong>diverse real-world granular terrains</strong> including basalt, dry sand, and beach sand.
-        To the best of our knowledge, this is <strong>the first demonstration of agile humanoid locomotion</strong>, including running and jumping on real-world granular terrain.
+        To the best of our knowledge, this is <strong>the first demonstration of agile humanoid locomotion</strong> on real-world granular terrain.
       </p>
     </section>
 
@@ -1056,27 +1065,27 @@
           <div class="velocity-grid-header">PPO (Rigid)</div>
 
           <div class="velocity-grid-label">0.5 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/0.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/Ours/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
 
           <div class="velocity-grid-label">1.0 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/1.0.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/Ours/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
 
           <div class="velocity-grid-label">1.5 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/1.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/Ours/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
 
           <div class="velocity-grid-label">2.0 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/Ours/2.0.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/basalt/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/Ours/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/basalt/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
         </div>
       </div>
-      <div class="method-image" style="max-width:60%; padding:1rem;">
+      <div class="method-image" style="max-width:45%; padding:1rem;">
         <img id="img-basalt-vel-tracking" src="./assets/ours/images/basalt_vel_tracking.png" alt="Velocity tracking performance on basalt terrain" />
       </div>
       <!-- <p class="caption">
@@ -1094,32 +1103,32 @@
           <div class="velocity-grid-header">PPO (Rigid)</div>
 
           <div class="velocity-grid-label">0.5 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/0.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/Ours/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_3D_RFT/0.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_Rigid/0.5.mp4" type="video/mp4"></video></div>
 
           <div class="velocity-grid-label">1.0 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/1.0.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/Ours/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_3D_RFT/1.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_Rigid/1.0.mp4" type="video/mp4"></video></div>
 
           <div class="velocity-grid-label">1.5 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/1.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_Rigid/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/Ours/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_3D_RFT/1.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_Rigid/1.5.mp4" type="video/mp4"></video></div>
 
           <div class="velocity-grid-label">2.0 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/2.0.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/Ours/2.0.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_3D_RFT/2.0.mp4" type="video/mp4"></video></div>
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
 
           <div class="velocity-grid-label">2.5 m/s</div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/Ours/2.5.mp4" type="video/mp4"></video></div>
-          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos/hardware/campus/PPO_3D_RFT/2.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/Ours/2.5.mp4" type="video/mp4"></video></div>
+          <div class="velocity-grid-cell"><video controls autoplay loop muted playsinline><source src="./assets/ours/videos_blur/campus/PPO_3D_RFT/2.5.mp4" type="video/mp4"></video></div>
           <div class="velocity-grid-cell empty"><img src="./assets/ours/icons/fail.png" alt="Fail" /><span>Fail</span></div>
         </div>
       </div>
-      <div class="method-image" style="max-width:60%; padding:1rem;">
+      <div class="method-image" style="max-width:45%; padding:1rem;">
         <img id="img-beach-volleyball-vel-tracking" src="./assets/ours/images/beach_volleyball_vel_tracking.png" alt="Velocity tracking performance on beach volleyball terrain" />
       </div>
       <!-- <p class="caption">
@@ -1133,7 +1142,7 @@
         <div class="img-card">
           <div class="zoom-video-wrapper">
             <video id="beachZoomMain" class="zoom-main-video" controls autoplay loop muted playsinline>
-              <source src="./assets/ours/videos/hardware/beach/PPO_3D_RFT.mp4" type="video/mp4">
+              <source src="./assets/ours/videos_blur/beach/PPO_3D_RFT.mp4" type="video/mp4">
             </video>
             <div class="zoom-inset">
               <video id="beachZoomInset" autoplay loop muted playsinline>
@@ -1145,7 +1154,7 @@
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/hardware/beach/PPO_Rigid.mp4" type="video/mp4">
+            <source src="./assets/ours/videos_blur/beach/PPO_Rigid.mp4" type="video/mp4">
           </video>
           <div class="img-card-label">PPO (Rigid)</div>
         </div>
@@ -1168,15 +1177,20 @@
         <div class="video-box">
           <p class="video-label">Ours</p>
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/hardware/terrain_transition/Ours.mp4" type="video/mp4">
+            <source src="./assets/ours/videos_blur/terrain_transition/ours_edit.mp4" type="video/mp4">
           </video>
         </div>
         <div class="video-box">
           <p class="video-label">PPO (3D RFT)</p>
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/hardware/terrain_transition/PPO_3D_RFT.mp4" type="video/mp4">
+            <source src="./assets/ours/videos_blur/terrain_transition/ppo_edit.mp4" type="video/mp4">
           </video>
         </div>
+      </div>
+      <div class="method-image method-image-row" style="max-width:100%; padding:1rem;">
+        <img id="img-joint-effort-ours" src="./assets/ours/videos/hardware/terrain_transition/left_foot_clearance.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
+        <img id="img-joint-effort-ours" src="./assets/ours/videos/hardware/terrain_transition/stiffness.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
+        <img id="img-joint-effort-ppo" src="./assets/ours/videos/hardware/terrain_transition/total_joint_effort.png" alt="Joint effort of the fixed-terrain PPO baseline during terrain transition" />
       </div>
     </section>
 
@@ -1314,9 +1328,9 @@
     </section>
 
 
-  <!-- ── Appendix ── -->
+  <!-- ── Environment Design ── -->
   <section class="fade-up">
-    <h2 class="section-title">Appendix</h2>
+    <h2 class="section-title">Environment Design</h2>
 
     <!-- Table 0: Observation and Action Space -->
     <h3 class="subsection-label">Observation and Action Space</h3>

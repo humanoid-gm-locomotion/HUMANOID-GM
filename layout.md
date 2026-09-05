@@ -42,4 +42,9 @@ We deploy the trained RL policy on a Unitree G1 humanoid robot to validate our a
 <!-- * Can you also add observation tables ? You can refer to paragraphs in /home/jkamohara3/isaac/ral26/RAL/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/Method.tex. 
 * Can you add assets/ours/images/basalt_vel_tracking.png and assets/ours/images/beach_volleyball_vel_tracking.png after each video tile?  -->
 
-* observation table needs a quite a bit of improvement. Basically, it should have teacher actor, teacher encoder, student actor, student encoder, and critic. Look at /Users/jnskkmhr/lab_ws/ral_26/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/method.tex for reference. If 5 items are two long, you can make table horizontally scrolable. 
+<!-- * observation table needs a quite a bit of improvement. Basically, it should have teacher actor, teacher encoder, student actor, student encoder, and critic. Look at /Users/jnskkmhr/lab_ws/ral_26/RAL_Learning_Humanoid_Locomotion_on_Granular_Terrain/First_draft/method.tex for reference. If 5 items are two long, you can make table horizontally scrolable.  -->
+
+<!-- * For per-terrain evaluation, can we make label like v=.. and Ours bigger? Also make entire video grid little bigger like 1.2 times. And make velocity plot bit smaller so that the font size becomes same as v=.., ours label. 
+* I now need to blur face of people in videos. Can you do that? You can use ffmpeg or free AI tool to do that. You can make a script so that you can batch process videos.  -->
+
+* In presentation/ral_video.pptx, I want to replace videos in p6-8 with blurred videos in assets/ours/videos_blur/basalt, assets/ours/videos_blur/campus, assets/ours/videos_blur/beach. 
