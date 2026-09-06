@@ -995,7 +995,7 @@
       </div> -->
       <div class="callout">
         <strong>TL;DR:</strong> 
-        We present the <strong>first successful humanoid running</strong> demonstrations on diverse real-world granular terrains.
+        We present the <strong>first successful humanoid running</strong> demonstrations on real-world granular terrains including gravel, dry sand, and beach.
         <!-- With a <strong>physically-grounded granular contact model</strong> based on <strong>3D RFT</strong> and a <strong>teacher-student RL</strong> framework, we demonstrate the <strong>first successful agile humanoid locomotion</strong> on diverse real-world granular terrains. -->
       </div>
     </section>
@@ -1027,7 +1027,7 @@
       <p class="caption">
         System diagram of our proposed terrain-adaptive humanoid locomotion.
         It has two-stage training where privileged teacher network is first trained with VAE terrain encoder and MLP policy.
-        Then, this teacher policy is distilled to deployable student policy by teacher-student RL. 
+        Then, this teacher policy is distilled to deployable student policy via a hybrid DAgger and PPO. 
       </p>
 
       <h3 class="subsection-label">Granular Contact Modeling</h3>
@@ -1037,7 +1037,7 @@
       </div>
       <p class="caption">
         Granular terrain contact model definition. 
-        The terrain model predicts contact force and moment based on the intruder's penetration depth, velocity angle, and orientation.
+        The terrain model predicts contact force and moment based on the foot body's penetration depth, velocity angle, and orientation.
       </p>
 
       <!-- <div class="callout">
@@ -1188,9 +1188,9 @@
         </div>
       </div>
       <div class="method-image method-image-row" style="max-width:100%; padding:1rem;">
-        <img id="img-joint-effort-ours" src="./assets/ours/videos/hardware/terrain_transition/left_foot_clearance.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
-        <img id="img-joint-effort-ours" src="./assets/ours/videos/hardware/terrain_transition/stiffness.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
-        <img id="img-joint-effort-ppo" src="./assets/ours/videos/hardware/terrain_transition/total_joint_effort.png" alt="Joint effort of the fixed-terrain PPO baseline during terrain transition" />
+        <img id="img-joint-effort-ours" src="./assets/ours/images/foot_clearance.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
+        <img id="img-joint-effort-ours" src="./assets/ours/images/stiffness.png" alt="Joint effort of our terrain-adaptive policy during terrain transition" />
+        <img id="img-joint-effort-ppo" src="./assets/ours/images/joint_torque.png" alt="Joint effort of the fixed-terrain PPO baseline during terrain transition" />
       </div>
     </section>
 
