@@ -955,7 +955,8 @@
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-top">
-       <h1>Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</h1>
+       <!-- <h1>GM-Loco: Terrain-Adaptive Humanoid Locomotion on Granular Media</h1> -->
+       <h1><span>GM-Loco</span><br>Terrain-Adaptive Humanoid Locomotion on Granular Media</h1>
     </div>
     <a href="#main" class="scroll-hint" aria-label="Scroll down">↓</a>
   </header>
@@ -965,7 +966,7 @@
 
     <!-- ── Authors ── -->
     <section class="authors-section fade-up">
-      <p class="paper-title">Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain</p>
+      <p class="paper-title">GM-Loco: Terrain-Adaptive Humanoid Locomotion on Granular Media</p>
       <p class="author-list">anonymous author(s)</p>
       <!-- <p class="author-list">
         <a href="https://jnskkmhr.github.io/" target="_blank">Junnosuke Kamohara</a>,
@@ -994,8 +995,9 @@
         Furthermore, our teacher-student RL framework enables the policy to adapt to varying terrain stiffness by conditioning policy on estimated terrain stiffness.
       </div> -->
       <div class="callout">
-        <strong>TL;DR:</strong> 
-        We present the <strong>first successful humanoid running</strong> demonstrations on real-world granular terrains including gravel, dry sand, and beach.
+        <strong>TL;DR:</strong>
+        <!-- We present the <strong>first successful humanoid running</strong> demonstrations on real-world granular terrains including gravel, dry sand, and beach. -->
+         We show the <strong>first humanoid running</strong> on real-world granular terrain, including gravel, dry sand, and beach, achieved through a <strong>physics-grounded terrain model</strong> and <strong>terrain-adaptive reinforcement learning</strong>.
         <!-- With a <strong>physically-grounded granular contact model</strong> based on <strong>3D RFT</strong> and a <strong>teacher-student RL</strong> framework, we demonstrate the <strong>first successful agile humanoid locomotion</strong> on diverse real-world granular terrains. -->
       </div>
     </section>
@@ -1327,6 +1329,29 @@
       </div>
     </section>
 
+    <!-- ── Jumping Motion ── -->
+    <section class="fade-up">
+      <h2 class="section-title">Extension: Dynamic Jumping Motion</h2>
+      <h3 class="subsection-label">Our method is capable of dynamic motion beyond walking</h3>
+      <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
+        Beyond locomotion, we test whether the learned contact model generalizes to a <strong>dynamic jumping task</strong>.
+      </p>
+      <div class="img-grid cols-2">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/jump/jump_rigid.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO-Rigid (cannot stand and fall back)</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/jump/jump_3d_rft.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO-3D-RFT</div>
+        </div>
+      </div>
+    </section>
+
 
   <!-- ── Environment Design ── -->
   <section class="fade-up">
@@ -1457,10 +1482,10 @@
       <h3 class="modal-title">Cite this work</h3>
       <div class="bibtex-block">
         <button type="button" class="copy-btn" id="copyBtn" onclick="copyBibtex()">Copy</button>
-        <!-- <pre id="bibtexCode">@article{gu2026refinedp,
-  title={REFINE-DP: Diffusion Policy Fine-tuning for Humanoid Loco-manipulation via Reinforcement Learning},
-  author={Gu, Zhaoyuan and Chen, Yipu and Chai, Zimeng and Cueva, Alfred and Nguyen, Thong and Wu, Yifan and Xue, Huishu and Kim, Minji and Legene, Isaac and Liu, Fukang and Kim, Matthew and Barula, Ayan and Chen, Yongxin and Zhao, Ye},
-  journal={arXiv preprint arXiv:2603.13707},
+        <!-- <pre id="bibtexCode">@article{kamohara2026learning,
+  title={Learning Terrain-Adaptive Humanoid Locomotion on Granular Terrain},
+  author={Kamohara, Junnosuke and Wu, Feiyang and Zong, Andy Ningan and Goldman, Daniel I and Nakka, Yashwanth and Hutchinson, Seth and Zhao, Ye},
+  journal={arXiv preprint arXiv:2609.10286},
   year={2026}
 }</pre> -->
         <pre id="bibtexCode"></pre>
