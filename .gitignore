@@ -6,5 +6,7 @@ scripts/.venv/
 assets/ours/videos/hardware_originals/
 presentation
 scripts
-assets/ours/videos/simulation/jump/
+assets/ours/videos/simulation/jump/*
+!assets/ours/videos/simulation/jump/jump_rigid.mp4
+!assets/ours/videos/simulation/jump/jump_3d_rft.mp4
 assets/ours/videos/simulation/policy_comparison/**/*_loop10.mp4
