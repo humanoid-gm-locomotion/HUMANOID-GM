@@ -1335,17 +1335,34 @@
       <h3 class="subsection-label">Our method is capable of dynamic motion beyond walking</h3>
       <p class="abstract-text" style="text-align:justify; margin-bottom:1.5rem;">
         Beyond locomotion, we test whether the learned contact model generalizes to a <strong>dynamic jumping task</strong>.
+        We train a jumping controller based on imitation RL and assistive wrench from ZEST using the 3D-RFT contact model.
+        The policy imitates a joint position trajectory retargeted from CMU BVH human motion data.
+        As demonstrated, the policy successfully achieves jumping on <strong>simulated basalt and dry sand with MPM</strong>.
       </p>
       <div class="img-grid cols-2">
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/jump/jump_rigid.mp4" type="video/mp4">
+            <source src="./assets/ours/videos/simulation/jump/baseline_basalt_compressed.mp4" type="video/mp4">
           </video>
-          <div class="img-card-label">PPO-Rigid (cannot stand and fall back)</div>
+          <!-- <div class="img-card-label">PPO-Rigid (cannot stand and fall back)</div> -->
         </div>
         <div class="img-card">
           <video controls autoplay loop muted playsinline>
-            <source src="./assets/ours/videos/simulation/jump/jump_3d_rft.mp4" type="video/mp4">
+            <source src="./assets/ours/videos/simulation/jump/finetune_policy_basalt_compressed.mp4" type="video/mp4">
+          </video>
+          <!-- <div class="img-card-label">PPO-3D-RFT</div> -->
+        </div>
+      </div>
+      <div class="img-grid cols-2">
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/jump/baseline_sand_compressed.mp4" type="video/mp4">
+          </video>
+          <div class="img-card-label">PPO-Rigid</div>
+        </div>
+        <div class="img-card">
+          <video controls autoplay loop muted playsinline>
+            <source src="./assets/ours/videos/simulation/jump/finetune_policy_sand_compressed.mp4" type="video/mp4">
           </video>
           <div class="img-card-label">PPO-3D-RFT</div>
         </div>
